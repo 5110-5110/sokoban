@@ -21,7 +21,7 @@ body {
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
   text-align: center;
-  max-width: 400px;
+  max-width: 500px;
   width: 100%;
 }
 
@@ -40,11 +40,9 @@ h1 {
   font-weight: bold;
 }
 
-/* パズル盤面 */
+/* パズル盤面（固定列数を解除してJavaScriptで柔軟に変更可能に修正） */
 .grid {
   display: grid;
-  grid-template-columns: repeat(6, 48px);
-  grid-template-rows: repeat(6, 48px);
   gap: 2px;
   justify-content: center;
   background-color: #1a252f;

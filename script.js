@@ -1,7 +1,7 @@
-// 全10ステージ定義（すべてのステージで箱と目的地の数が一致し、確実に解けます）
+// 手応え抜群の本格的な10ステージ構成
 // W: 壁, .: 床, T: 目的地, B: 荷物, P: プレイヤー
 const stages = [
-  // ステージ 1: 直線で押す（チュートリアル）
+  // Stage 1: 直線の基本
   [
     "WWWWWW",
     "W....W",
@@ -10,87 +10,84 @@ const stages = [
     "W....W",
     "WWWWWW"
   ],
-  // ステージ 2: 2つの荷物を直線で配置
+  // Stage 2: 荷物を迂回して押す
   [
     "WWWWWW",
     "W.T..W",
+    "W.W..W",
     "W.B..W",
     "W.P..W",
-    "W.BT.W",
     "WWWWWW"
   ],
-  // ステージ 3: 荷物の上側に回り込んで下へ押す
-  [
-    "WWWWWW",
-    "W.P..W",
-    "W..B.W",
-    "W..T.W",
-    "W....W",
-    "WWWWWW"
-  ],
-  // ステージ 4: 左右の回り込みの練習
-  [
-    "WWWWWW",
-    "W.T..W",
-    "W....W",
-    "W..B.W",
-    "W.P..W",
-    "WWWWWW"
-  ],
-  // ステージ 5: 2つの荷物を上と下に押し分ける
+  // Stage 3: 押し順と引き返し（2箱）
   [
     "WWWWWWW",
     "W..T..W",
-    "W..B..W",
-    "W.P...W",
-    "W..B..W",
+    "W.B.B.W",
+    "W..P..W",
     "W..T..W",
     "WWWWWWW"
   ],
-  // ステージ 6: 修正版（1つの荷物を壁を迂回して配置する）
-  [
-    "WWWWWWW",
-    "W.P...W",
-    "W.W.B.W",
-    "W.W...W",
-    "W...T.W",
-    "WWWWWWW"
-  ],
-  // ステージ 7: 2つの荷物を壁を避けながら並べる
+  // Stage 4: 狭い角でのすれ違い
   [
     "WWWWWWW",
     "W.T...W",
-    "W.B.W.W",
+    "W.W.BTW",
     "W.P...W",
-    "W.W.B.W",
-    "W...T.W",
     "WWWWWWW"
   ],
-  // ステージ 8: 2つの荷物を交差させて目的地へ運ぶ
+  // Stage 5: 3箱の優先順位パズル
   [
     "WWWWWWWW",
-    "W......W",
-    "W.T.W.TW",
-    "W.B.P.BW",
+    "W..T.T.W",
+    "W.WBBB.W",
+    "W...P.TW",
     "W......W",
     "WWWWWWWW"
   ],
-  // ステージ 9: 押し込む順番が大切な2つの荷物
+  // Stage 6: 中央の障害物と精密な誘導
   [
     "WWWWWWWW",
-    "W..T...W",
-    "W.WB...W",
-    "W.PB.T.W",
-    "W......W",
+    "W...W..W",
+    "W.T.B.TW",
+    "W.PWB..W",
+    "W...W..W",
     "WWWWWWWW"
   ],
-  // ステージ 10: 最終ステージ（3つの荷物と3つの目的地）
+  // Stage 7: 行き止まりを回避する思考型
+  [
+    "WWWWWWWW",
+    "W.T.T..W",
+    "W.W.WW.W",
+    "W.B.B..W",
+    "W..P...W",
+    "WWWWWWWW"
+  ],
+  // Stage 8: 狭路の連鎖パズル（3箱）
   [
     "WWWWWWWW",
     "W.T.T.TW",
+    "W..BBB.W",
+    "WW.P...W",
+    "W......W",
+    "WWWWWWWW"
+  ],
+  // Stage 9: 空間が限られた超難所
+  [
+    "WWWWWWWW",
+    "W.T.W..W",
+    "W.B.B.TW",
+    "W.P.W..W",
+    "W...T..W",
+    "WWWWWWWW"
+  ],
+  // Stage 10: 最終試練（複雑な配置）
+  [
+    "WWWWWWWW",
+    "W.T.T.TW",
+    "W.W.W..W",
     "W.B.B.BW",
     "W...P..W",
-    "W......W",
     "WWWWWWWW"
   ]
 ];
@@ -100,18 +97,21 @@ let grid = [];
 let playerPos = { x: 0, y: 0 };
 let moveCount = 0;
 
+// アンドゥ（1手戻す）のための履歴管理
+let historyStack = [];
+
 // ステージの読み込み
 function loadStage(stageIndex) {
   const stageData = stages[stageIndex];
   grid = [];
   moveCount = 0;
+  historyStack = [];
   
-  // 盤面の大きさに合わせてCSSのグリッド列数を変更
   const gridElement = document.getElementById('grid');
   const width = stageData[0].length;
   const height = stageData.length;
-  gridElement.style.gridTemplateColumns = `repeat(${width}, 48px)`;
-  gridElement.style.gridTemplateRows = `repeat(${height}, 48px)`;
+  gridElement.style.gridTemplateColumns = `repeat(${width}, 44px)`;
+  gridElement.style.gridTemplateRows = `repeat(${height}, 44px)`;
 
   document.getElementById('move-count').textContent = moveCount;
   document.getElementById('stage-num').textContent = stageIndex + 1;
@@ -122,7 +122,7 @@ function loadStage(stageIndex) {
     for (let x = 0; x < stageData[y].length; x++) {
       const char = stageData[y][x];
       let cell = {
-        type: 'floor', // floor, wall
+        type: 'floor',
         target: false,
         box: false,
         player: false
@@ -140,6 +140,30 @@ function loadStage(stageIndex) {
     }
     grid.push(row);
   }
+  render();
+}
+
+// 現在の状態をディープコピーして履歴に保存
+function saveHistory() {
+  const stateCopy = {
+    playerPos: { ...playerPos },
+    grid: grid.map(row => row.map(cell => ({ ...cell })))
+  };
+  historyStack.push(stateCopy);
+}
+
+// 1手戻す（Undo）
+function undoMove() {
+  if (historyStack.length === 0) return;
+
+  const previousState = historyStack.pop();
+  playerPos = previousState.playerPos;
+  grid = previousState.grid;
+  
+  moveCount = Math.max(0, moveCount - 1);
+  document.getElementById('move-count').textContent = moveCount;
+  document.getElementById('message').textContent = "1手戻しました";
+
   render();
 }
 
@@ -183,34 +207,37 @@ function movePlayer(dx, dy) {
   const newX = playerPos.x + dx;
   const newY = playerPos.y + dy;
 
-  // 盤面外チェック
   if (newY < 0 || newY >= grid.length || newX < 0 || newX >= grid[0].length) return;
 
   const currentCell = grid[playerPos.y][playerPos.x];
   const targetCell = grid[newY][newX];
 
-  // 壁の場合は移動できない
   if (targetCell.type === 'wall') return;
 
-  // 移動先に箱がある場合
+  let boxMoved = false;
+
+  // 箱がある場合の移動判定
   if (targetCell.box) {
     const boxNewX = newX + dx;
     const boxNewY = newY + dy;
 
-    // 箱の移動先盤面外チェック
     if (boxNewY < 0 || boxNewY >= grid.length || boxNewX < 0 || boxNewX >= grid[0].length) return;
 
     const boxTargetCell = grid[boxNewY][boxNewX];
 
-    // 箱の押し先が壁か、別の箱の場合は押せない
     if (boxTargetCell.type === 'wall' || boxTargetCell.box) return;
 
-    // 箱を移動
+    // 移動確定の直前に履歴を保存
+    saveHistory();
+
     targetCell.box = false;
     boxTargetCell.box = true;
+    boxMoved = true;
+  } else {
+    // プレイヤー単体移動の履歴保存
+    saveHistory();
   }
 
-  // プレイヤー移動
   currentCell.player = false;
   targetCell.player = true;
   playerPos = { x: newX, y: newY };
@@ -243,13 +270,13 @@ function checkWin() {
         currentStageIndex++;
         loadStage(currentStageIndex);
       } else {
-        document.getElementById('message').textContent = '🏆 全10ステージクリア！おめでとう！';
+        document.getElementById('message').textContent = '🏆 全10ステージ完全制覇！おめでとう！';
       }
     }, 1000);
   }
 }
 
-// やり直し
+// ステージ初期化
 function resetStage() {
   loadStage(currentStageIndex);
 }
@@ -259,19 +286,27 @@ window.addEventListener('keydown', (e) => {
   switch (e.key) {
     case 'ArrowUp':
     case 'w':
+    case 'W':
       movePlayer(0, -1);
       break;
     case 'ArrowDown':
     case 's':
+    case 'S':
       movePlayer(0, 1);
       break;
     case 'ArrowLeft':
     case 'a':
+    case 'A':
       movePlayer(-1, 0);
       break;
     case 'ArrowRight':
     case 'd':
+    case 'D':
       movePlayer(1, 0);
+      break;
+    case 'z':
+    case 'Z':
+      undoMove();
       break;
     case 'r':
     case 'R':
@@ -280,5 +315,5 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
-// 初期化
+// 初期起動
 loadStage(0);

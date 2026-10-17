@@ -1,7 +1,7 @@
-// 手応え抜群の本格的な10ステージ構成
+// 必ずクリア可能で手応えのある10ステージ構成
 // W: 壁, .: 床, T: 目的地, B: 荷物, P: プレイヤー
 const stages = [
-  // Stage 1: 直線の基本
+  // Stage 1: 直線の基本（チュートリアル）
   [
     "WWWWWW",
     "W....W",
@@ -10,7 +10,7 @@ const stages = [
     "W....W",
     "WWWWWW"
   ],
-  // Stage 2: 荷物を迂回して押す
+  // Stage 2: 障害物を回り込む
   [
     "WWWWWW",
     "W.T..W",
@@ -19,73 +19,75 @@ const stages = [
     "W.P..W",
     "WWWWWW"
   ],
-  // Stage 3: 押し順と引き返し（2箱）
+  // Stage 3: 上下に押し分ける（2箱）
   [
     "WWWWWWW",
     "W..T..W",
-    "W.B.B.W",
-    "W..P..W",
-    "W..T..W",
-    "WWWWWWW"
-  ],
-  // Stage 4: 狭い角でのすれ違い
-  [
-    "WWWWWWW",
-    "W.T...W",
-    "W.W.BTW",
+    "W.B...W",
     "W.P...W",
+    "W.B...W",
+    "W..T..W",
     "WWWWWWW"
   ],
-  // Stage 5: 3箱の優先順位パズル
+  // Stage 4: 【修正版】中央の壁を回り込んで上から下へ押し込む
+  [
+    "WWWWWWW",
+    "W.P.T.W",
+    "W..B..W",
+    "W.W.W.W",
+    "W.....W",
+    "WWWWWWW"
+  ],
+  // Stage 5: 押し順が大事な2箱パズル
   [
     "WWWWWWWW",
-    "W..T.T.W",
-    "W.WBBB.W",
-    "W...P.TW",
+    "W..T...W",
+    "W.B.B..W",
+    "W.P....W",
+    "W....T.W",
+    "WWWWWWWW"
+  ],
+  // Stage 6: 狭い通り道と箱の待避
+  [
+    "WWWWWWWW",
+    "W.T....W",
+    "W.W.B..W",
+    "W.P.B.TW",
     "W......W",
     "WWWWWWWW"
   ],
-  // Stage 6: 中央の障害物と精密な誘導
+  // Stage 7: 交差する2つの目的地
   [
     "WWWWWWWW",
-    "W...W..W",
-    "W.T.B.TW",
-    "W.PWB..W",
-    "W...W..W",
+    "W..T...W",
+    "W.WB.W.W",
+    "W.P..B.W",
+    "W.T....W",
     "WWWWWWWW"
   ],
-  // Stage 7: 行き止まりを回避する思考型
-  [
-    "WWWWWWWW",
-    "W.T.T..W",
-    "W.W.WW.W",
-    "W.B.B..W",
-    "W..P...W",
-    "WWWWWWWW"
-  ],
-  // Stage 8: 狭路の連鎖パズル（3箱）
+  // Stage 8: 3箱の順番パズル
   [
     "WWWWWWWW",
     "W.T.T.TW",
-    "W..BBB.W",
-    "WW.P...W",
+    "W.B.B.BW",
+    "W...P..W",
     "W......W",
     "WWWWWWWW"
   ],
-  // Stage 9: 空間が限られた超難所
+  // Stage 9: 角に追い詰めない絶妙な誘導
   [
     "WWWWWWWW",
     "W.T.W..W",
-    "W.B.B.TW",
-    "W.P.W..W",
-    "W...T..W",
+    "W..B.B.W",
+    "W.P.W.TW",
+    "W......W",
     "WWWWWWWW"
   ],
-  // Stage 10: 最終試練（複雑な配置）
+  // Stage 10: 最終難関（思考力を試す配置）
   [
     "WWWWWWWW",
     "W.T.T.TW",
-    "W.W.W..W",
+    "W.W..W.W",
     "W.B.B.BW",
     "W...P..W",
     "WWWWWWWW"
@@ -214,8 +216,6 @@ function movePlayer(dx, dy) {
 
   if (targetCell.type === 'wall') return;
 
-  let boxMoved = false;
-
   // 箱がある場合の移動判定
   if (targetCell.box) {
     const boxNewX = newX + dx;
@@ -232,7 +232,6 @@ function movePlayer(dx, dy) {
 
     targetCell.box = false;
     boxTargetCell.box = true;
-    boxMoved = true;
   } else {
     // プレイヤー単体移動の履歴保存
     saveHistory();
@@ -301,7 +300,6 @@ window.addEventListener('keydown', (e) => {
       break;
     case 'ArrowRight':
     case 'd':
-    case 'D':
       movePlayer(1, 0);
       break;
     case 'z':

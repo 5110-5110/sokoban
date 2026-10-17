@@ -1,7 +1,7 @@
-// ステージデータ定義
+// ステージデータ定義 (10ステージ)
 // W: 壁, .: 床, T: 目的地, B: 荷物, P: プレイヤー
 const stages = [
-  // ステージ 1
+  // ステージ 1：超基本（チュートリアル）
   [
     "WWWWWW",
     "W....W",
@@ -10,7 +10,7 @@ const stages = [
     "W....W",
     "WWWWWW"
   ],
-  // ステージ 2
+  // ステージ 2：2つの荷物を直線状に運ぶ
   [
     "WWWWWW",
     "W.T..W",
@@ -18,6 +18,76 @@ const stages = [
     "W.P..W",
     "W.BT.W",
     "WWWWWW"
+  ],
+  // ステージ 3：障害物（壁）を回り込む
+  [
+    "WWWWWWW",
+    "W.P...W",
+    "W.WW.BW",
+    "W..T..W",
+    "WWWWWWW"
+  ],
+  // ステージ 4：コーナーで詰まらないように移動する
+  [
+    "WWWWWWW",
+    "W....TW",
+    "W.W.B.W",
+    "W.P...W",
+    "WWWWWWW"
+  ],
+  // ステージ 5：2つの荷物を交差させて配置する
+  [
+    "WWWWWWWW",
+    "W......W",
+    "W.T.B..W",
+    "W.P.B.TW",
+    "W......W",
+    "WWWWWWWW"
+  ],
+  // ステージ 6：狭い通路の活用
+  [
+    "WWWWWWWW",
+    "WW.T...W",
+    "W..W.B.W",
+    "W.P.B..W",
+    "W...T.WW",
+    "WWWWWWWW"
+  ],
+  // ステージ 7：押し込む順序が重要な3つの荷物
+  [
+    "WWWWWWWW",
+    "W.T.T.TW",
+    "W..BBB.W",
+    "W...P..W",
+    "W......W",
+    "WWWWWWWW"
+  ],
+  // ステージ 8：少し入り組んだ部屋構造
+  [
+    "WWWWWWWW",
+    "W..W...W",
+    "W.P.B.TW",
+    "WWW.WW.W",
+    "W.T.B..W",
+    "WWWWWWWW"
+  ],
+  // ステージ 9：移動範囲が限られた難所
+  [
+    "WWWWWWWW",
+    "W.TWW..W",
+    "W..B.B.W",
+    "WW.P.T.W",
+    "W......W",
+    "WWWWWWWW"
+  ],
+  // ステージ 10：最終ステージ（複雑な配置）
+  [
+    "WWWWWWWW",
+    "W.T..T.W",
+    "W.WB.BW",
+    "W..B...W",
+    "W.PWW.TW",
+    "WWWWWWWW"
   ]
 ];
 
@@ -31,6 +101,14 @@ function loadStage(stageIndex) {
   const stageData = stages[stageIndex];
   grid = [];
   moveCount = 0;
+  
+  // 盤面の大きさに合わせてCSSのグリッド列数を変更
+  const gridElement = document.getElementById('grid');
+  const width = stageData[0].length;
+  const height = stageData.length;
+  gridElement.style.gridTemplateColumns = `repeat(${width}, 48px)`;
+  gridElement.style.gridTemplateRows = `repeat(${height}, 48px)`;
+
   document.getElementById('move-count').textContent = moveCount;
   document.getElementById('stage-num').textContent = stageIndex + 1;
   document.getElementById('message').textContent = "すべての荷物を目的地に運ぼう！";
@@ -101,6 +179,9 @@ function movePlayer(dx, dy) {
   const newX = playerPos.x + dx;
   const newY = playerPos.y + dy;
 
+  // 盤面外チェック
+  if (newY < 0 || newY >= grid.length || newX < 0 || newX >= grid[0].length) return;
+
   const currentCell = grid[playerPos.y][playerPos.x];
   const targetCell = grid[newY][newX];
 
@@ -111,6 +192,10 @@ function movePlayer(dx, dy) {
   if (targetCell.box) {
     const boxNewX = newX + dx;
     const boxNewY = newY + dy;
+
+    // 箱の移動先盤面外チェック
+    if (boxNewY < 0 || boxNewY >= grid.length || boxNewX < 0 || boxNewX >= grid[0].length) return;
+
     const boxTargetCell = grid[boxNewY][boxNewX];
 
     // 箱の押し先が壁か、別の箱の場合は押せない
@@ -154,7 +239,7 @@ function checkWin() {
         currentStageIndex++;
         loadStage(currentStageIndex);
       } else {
-        document.getElementById('message').textContent = '🏆 全ステージクリア！おめでとう！';
+        document.getElementById('message').textContent = '🏆 全10ステージクリア！おめでとう！';
       }
     }, 1000);
   }

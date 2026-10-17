@@ -1,0 +1,133 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.game-container {
+  background: #34495e;
+  padding: 24px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+h1 {
+  font-size: 22px;
+  margin-bottom: 16px;
+}
+
+.info-panel {
+  display: flex;
+  justify-content: space-around;
+  background: #2c3e50;
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  font-weight: bold;
+}
+
+/* パズル盤面 */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(6, 48px);
+  grid-template-rows: repeat(6, 48px);
+  gap: 2px;
+  justify-content: center;
+  background-color: #1a252f;
+  padding: 4px;
+  border-radius: 8px;
+  margin: 0 auto 16px auto;
+  width: fit-content;
+}
+
+.cell {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  border-radius: 4px;
+  user-select: none;
+}
+
+/* マスの種類別スタイル */
+.cell.wall { background-color: #7f8c8d; }
+.cell.floor { background-color: #ecf0f1; }
+.cell.target { background-color: #f1c40f; }
+.cell.box-on-target { background-color: #2ecc71; }
+
+.message {
+  font-weight: bold;
+  font-size: 15px;
+  min-height: 24px;
+  margin-bottom: 16px;
+  color: #f39c12;
+}
+
+/* 操作ボタン */
+.controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.controls .row {
+  display: flex;
+  gap: 6px;
+}
+
+.controls button {
+  width: 50px;
+  height: 40px;
+  font-size: 18px;
+  background: #e67e22;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.controls button:hover {
+  background: #d35400;
+}
+
+.reset-btn {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.reset-btn:hover {
+  background: #c0392b;
+}
+
+.instructions {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #bdc3c7;
+  line-height: 1.6;
+}
